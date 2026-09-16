@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#21120d">
+  <meta name="description" content="Invitație personală la o seară de muzică tradițională românească în București.">
+  <title>Dor de Bucovina — Invitație pentru Vasile</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+    :root{--cream:#f5ead5;--paper:#ead5ad;--wine:#6d1722;--gold:#d7aa57;--ink:#1d110e;--forest:#1f3b2d}
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;background:var(--ink);color:var(--cream);font-family:"DM Sans",sans-serif;overflow-x:hidden}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.15;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+    .hero{min-height:100svh;display:grid;place-items:center;padding:32px 20px;position:relative;background:radial-gradient(circle at 50% 18%,#7e2a27 0,transparent 35%),linear-gradient(150deg,#151b15,#32130f 55%,#110c0a)}
+    .ornament{position:absolute;inset:18px;border:1px solid rgba(215,170,87,.45);pointer-events:none}
+    .ornament::before,.ornament::after{content:"✦";position:absolute;color:var(--gold);font-size:22px;background:#1e120e;padding:0 12px;left:50%;transform:translateX(-50%)}
+    .ornament::before{top:-13px}.ornament::after{bottom:-13px}
+    .hero-inner{width:min(920px,100%);text-align:center;position:relative;z-index:1}
+    .eyebrow{font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:26px}
+    h1{font-family:"Playfair Display",serif;font-size:clamp(4rem,12vw,8.6rem);line-height:.78;margin:0;text-transform:uppercase;letter-spacing:-.055em;text-shadow:0 12px 45px #000}
+    h1 span{display:block;font-size:.48em;font-style:italic;color:var(--gold);letter-spacing:.02em;margin-top:18px;text-transform:none}
+    .subtitle{font-family:"Playfair Display",serif;font-size:clamp(1.15rem,3vw,1.65rem);margin:34px auto 12px;max-width:640px}
+    .meta{display:flex;justify-content:center;gap:10px 28px;flex-wrap:wrap;color:#dfc99e;font-size:.9rem;letter-spacing:.07em;text-transform:uppercase}
+    .guest{margin:38px auto 24px;border-top:1px solid rgba(215,170,87,.45);border-bottom:1px solid rgba(215,170,87,.45);padding:18px;max-width:600px}
+    .guest small{display:block;color:#bca77f;text-transform:uppercase;letter-spacing:.2em;margin-bottom:5px}
+    .guest strong{font-family:"Playfair Display",serif;font-size:clamp(1.35rem,3vw,2rem);color:white}
+    button{appearance:none;border:1px solid var(--gold);background:var(--gold);color:#23140d;padding:15px 25px;font:700 .9rem "DM Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:.25s;box-shadow:0 10px 35px rgba(0,0,0,.3)}
+    button:hover{transform:translateY(-2px);background:#f0c978}.note{font-size:.74rem;color:#9c8b74;margin-top:16px}
+    .story{padding:84px 20px;background:var(--cream);color:var(--ink)}
+    .story-inner{width:min(880px,100%);margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:65px;align-items:center}
+    .seal{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;padding:18%;background:var(--wine);color:var(--cream);outline:1px solid var(--gold);outline-offset:-12px;box-shadow:0 20px 60px #7d5b3c55;transform:rotate(-3deg)}
+    .seal strong{font:700 clamp(2rem,6vw,4rem)/.88 "Playfair Display",serif}.seal span{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;margin-top:12px}
+    h2{font:700 clamp(2.3rem,5vw,4.4rem)/.95 "Playfair Display",serif;margin:0 0 24px;color:var(--wine)}
+    .story p{font-size:1.05rem;line-height:1.75;color:#4e3930}
+    .artists{font-weight:700;color:var(--forest)!important}
+    dialog{width:min(650px,calc(100% - 28px));padding:0;border:1px solid var(--gold);background:#1b100d;color:var(--cream);box-shadow:0 30px 100px #000;border-radius:2px;overflow:hidden}
+    dialog::backdrop{background:rgba(6,4,3,.88);backdrop-filter:blur(8px)}
+    .reveal-photo{height:300px;background:url('assets/vasile-radu.jpg') center/cover no-repeat;position:relative}
+    .reveal-photo::after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#1b100d)}
+    .reveal{padding:4px 30px 32px;text-align:center}
+    .reveal .surprise{color:var(--gold);letter-spacing:.25em;text-transform:uppercase;font-size:.75rem}
+    .reveal h3{font:700 clamp(2rem,7vw,3.8rem)/.98 "Playfair Display",serif;margin:10px 0 18px}
+    .reveal p{line-height:1.65;color:#e2cfb0;font-size:1.02rem}.reveal b{color:white}
+    .close{margin-top:12px;background:transparent;color:var(--gold)}
+    .confetti{position:fixed;top:-20px;width:9px;height:15px;z-index:20;animation:fall 2.8s linear forwards}
+    @keyframes fall{to{transform:translate(var(--drift),110vh) rotate(680deg)}}
+    @media(max-width:700px){.story-inner{grid-template-columns:1fr;gap:42px}.seal{max-width:340px;margin:auto}.hero{padding:50px 24px}.ornament{inset:10px}.reveal-photo{height:240px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.confetti{display:none}button{transition:none}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="ornament"></div>
+      <div class="hero-inner">
+        <div class="eyebrow">Invitație personală • București</div>
+        <h1>Dor<span>de Bucovina</span></h1>
+        <p class="subtitle">O seară extraordinară de muzică tradițională românească</p>
+        <div class="meta"><span>12 decembrie 2026 • ora 19:30</span><span>Centrul Cultural Carpați</span></div>
+        <div class="guest"><small>Invitație rezervată pentru</small><strong>Vasile Florinel Nechita</strong></div>
+        <button id="openInvite">Deschide invitația</button>
+        <div class="note">Acces pentru o persoană • invitație nominală</div>
+      </div>
+    </section>
+    <section class="story">
+      <div class="story-inner">
+        <div class="seal"><div><strong>Un cântec.<br>O poveste.</strong><br><span>Rădăcini care ne unesc</span></div></div>
+        <div>
+          <h2>Sufletul Bucovinei, la București</h2>
+          <p>O întâlnire de sărbătoare cu glasuri, cobză, vioară și dansuri din nordul Moldovei, într-un spectacol creat pentru cei care poartă Bucovina în suflet.</p>
+          <p class="artists">Ansamblul „Dor de Bucovina” • Orchestra „Flori de Munte” • invitați surpriză</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dialog id="prank" aria-labelledby="revealTitle">
+    <div class="reveal-photo" role="img" aria-label="Radu și Vasile zâmbind împreună"></div>
+    <div class="reveal">
+      <div class="surprise">Surpriză, Vasile!</div>
+      <h3 id="revealTitle">Ai fost păcălit! 😂</h3>
+      <p>Concertul nu există, dar invitația a fost creată special pentru tine, cu multă dragoste.</p>
+      <p><b>Ai fost păcălit de nora ta preferată, Hélène, și de fiul tău preferat, Radu!</b></p>
+      <p>Te iubim! ❤️</p>
+      <button class="close" id="closeInvite">Am râs! 😄</button>
+    </div>
+  </dialog>
+  <script>
+    const dialog = document.querySelector('#prank');
+    const colors = ['#d7aa57','#f5ead5','#8b1d2c','#2f6b49','#d9503f'];
+    function celebrate(){
+      for(let i=0;i<70;i++){
+        const p=document.createElement('i'); p.className='confetti';
+        p.style.left=Math.random()*100+'vw'; p.style.background=colors[i%colors.length];
+        p.style.setProperty('--drift',(Math.random()*180-90)+'px'); p.style.animationDelay=Math.random()*.55+'s';
+        document.body.appendChild(p); setTimeout(()=>p.remove(),3600);
+      }
+    }
+    document.querySelector('#openInvite').addEventListener('click',()=>{dialog.showModal();celebrate()});
+    document.querySelector('#closeInvite').addEventListener('click',()=>dialog.close());
+    dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+  </script>
+</body>
+</html>
