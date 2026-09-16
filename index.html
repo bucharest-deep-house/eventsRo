@@ -36,13 +36,20 @@
     .artists{font-weight:700;color:var(--forest)!important}
     dialog{width:min(650px,calc(100% - 28px));padding:0;border:1px solid var(--gold);background:#1b100d;color:var(--cream);box-shadow:0 30px 100px #000;border-radius:2px;overflow:hidden}
     dialog::backdrop{background:rgba(6,4,3,.88);backdrop-filter:blur(8px)}
-    .reveal-photo{height:300px;background:url('assets/vasile-radu.jpg') center/cover no-repeat;position:relative}
+    .reveal-photo{height:260px;background:url('assets/vasile-radu.jpg') center/cover no-repeat;position:relative}
     .reveal-photo::after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#1b100d)}
     .reveal{padding:4px 30px 32px;text-align:center}
     .reveal .surprise{color:var(--gold);letter-spacing:.25em;text-transform:uppercase;font-size:.75rem}
     .reveal h3{font:700 clamp(2rem,7vw,3.8rem)/.98 "Playfair Display",serif;margin:10px 0 18px}
     .reveal p{line-height:1.65;color:#e2cfb0;font-size:1.02rem}.reveal b{color:white}
     .close{margin-top:12px;background:transparent;color:var(--gold)}
+    .camera-step{padding:28px;text-align:center}.camera-step h3{font:700 clamp(1.8rem,6vw,3rem)/1 "Playfair Display",serif;margin:8px 0 12px}
+    .privacy{color:#cebfa7;line-height:1.5;font-size:.9rem;max-width:500px;margin:0 auto 20px}
+    .camera-frame{width:100%;aspect-ratio:16/10;background:#090605;border:1px solid #725a31;position:relative;overflow:hidden;margin:18px 0}
+    video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}.camera-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#8f7c5e;padding:25px}
+    .camera-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.secondary{background:transparent;color:var(--gold)}
+    #capturedSelfie{width:150px;height:150px;object-fit:cover;transform:scaleX(-1);border:6px solid #f5ead5;box-shadow:0 12px 35px #000;margin-top:-74px;position:relative;z-index:2;display:none}
+    #downloadSouvenir{margin-top:10px}.error{color:#ffb3a8;font-size:.85rem;min-height:1.3em;margin:10px 0 0}
     .confetti{position:fixed;top:-20px;width:9px;height:15px;z-index:20;animation:fall 2.8s linear forwards}
     @keyframes fall{to{transform:translate(var(--drift),110vh) rotate(680deg)}}
     @media(max-width:700px){.story-inner{grid-template-columns:1fr;gap:42px}.seal{max-width:340px;margin:auto}.hero{padding:50px 24px}.ornament{inset:10px}.reveal-photo{height:240px}}
@@ -74,17 +81,37 @@
       </div>
     </section>
   </main>
-  <dialog id="prank" aria-labelledby="revealTitle">
+  <dialog id="prank" aria-labelledby="cameraTitle">
+    <section class="camera-step" id="cameraStep">
+      <div class="surprise">Invitație nominală</div>
+      <h3 id="cameraTitle">Verificarea invitației</h3>
+      <p class="privacy">Dacă dorești, poți face o fotografie pentru suvenirul-surpriză. Fotografia rămâne numai pe dispozitivul tău și nu este trimisă nicăieri.</p>
+      <div class="camera-frame">
+        <video id="camera" autoplay playsinline muted></video>
+        <div class="camera-placeholder" id="cameraPlaceholder">Camera este oprită. Apasă butonul de mai jos pentru a o activa.</div>
+      </div>
+      <div class="camera-actions">
+        <button id="startCamera">Activează camera</button>
+        <button class="secondary" id="takePhoto" hidden>Fă fotografia</button>
+        <button class="secondary" id="skipPhoto">Continuă fără fotografie</button>
+      </div>
+      <p class="error" id="cameraError"></p>
+    </section>
+    <section id="revealStep" hidden>
     <div class="reveal-photo" role="img" aria-label="Radu și Vasile zâmbind împreună"></div>
     <div class="reveal">
+      <img id="capturedSelfie" alt="Fotografia ta suvenir">
       <div class="surprise">Surpriză, Vasile!</div>
       <h3 id="revealTitle">Ai fost păcălit! 😂</h3>
       <p>Concertul nu există, dar invitația a fost creată special pentru tine, cu multă dragoste.</p>
       <p><b>Ai fost păcălit de nora ta preferată, Hélène, și de fiul tău preferat, Radu!</b></p>
       <p>Te iubim! ❤️</p>
+      <button id="downloadSouvenir" hidden>Descarcă fotografia-suvenir</button><br>
       <button class="close" id="closeInvite">Am râs! 😄</button>
     </div>
+    </section>
   </dialog>
+  <canvas id="photoCanvas" hidden></canvas>
   <script>
     const dialog = document.querySelector('#prank');
     const colors = ['#d7aa57','#f5ead5','#8b1d2c','#2f6b49','#d9503f'];
@@ -96,8 +123,41 @@
         document.body.appendChild(p); setTimeout(()=>p.remove(),3600);
       }
     }
-    document.querySelector('#openInvite').addEventListener('click',()=>{dialog.showModal();celebrate()});
-    document.querySelector('#closeInvite').addEventListener('click',()=>dialog.close());
+    const video=document.querySelector('#camera'), canvas=document.querySelector('#photoCanvas');
+    const cameraStep=document.querySelector('#cameraStep'), revealStep=document.querySelector('#revealStep');
+    const startButton=document.querySelector('#startCamera'), takeButton=document.querySelector('#takePhoto');
+    const errorBox=document.querySelector('#cameraError'); let stream=null, selfieData='';
+    function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+    async function startCamera(){
+      errorBox.textContent='';
+      if(!navigator.mediaDevices?.getUserMedia){errorBox.textContent='Camera nu este disponibilă în acest browser.';return}
+      try{
+        stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+        video.srcObject=stream; video.style.display='block'; document.querySelector('#cameraPlaceholder').hidden=true;
+        takeButton.hidden=false; startButton.textContent='Repornește camera';
+      }catch(e){errorBox.textContent='Accesul la cameră nu a fost permis. Poți continua fără fotografie sau poți încerca din nou.'}
+    }
+    function reveal(){stopCamera();cameraStep.hidden=true;revealStep.hidden=false;celebrate()}
+    function takePhoto(){
+      if(!video.videoWidth){errorBox.textContent='Așteaptă o clipă până când apare imaginea camerei.';return}
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+      const ctx=canvas.getContext('2d');ctx.translate(canvas.width,0);ctx.scale(-1,1);ctx.drawImage(video,0,0);
+      selfieData=canvas.toDataURL('image/jpeg',.9);const img=document.querySelector('#capturedSelfie');img.src=selfieData;img.style.display='inline-block';
+      document.querySelector('#downloadSouvenir').hidden=false;reveal();
+    }
+    function downloadSouvenir(){
+      const out=document.createElement('canvas');out.width=1080;out.height=1350;const c=out.getContext('2d');
+      c.fillStyle='#1b100d';c.fillRect(0,0,out.width,out.height);c.strokeStyle='#d7aa57';c.lineWidth=6;c.strokeRect(35,35,1010,1280);
+      const img=new Image();img.onload=()=>{const s=Math.min(760/img.width,650/img.height);const w=img.width*s,h=img.height*s;c.drawImage(img,(1080-w)/2,115,w,h);
+        c.textAlign='center';c.fillStyle='#d7aa57';c.font='700 38px serif';c.fillText('DOR DE BUCOVINA',540,850);
+        c.fillStyle='#f5ead5';c.font='700 67px serif';c.fillText('AI FOST PĂCĂLIT, VASILE! 😂',540,945);
+        c.font='34px sans-serif';c.fillText('Cu drag, Hélène și Radu ❤️',540,1030);c.fillStyle='#bda982';c.font='26px sans-serif';c.fillText('12 decembrie 2026 • București',540,1120);
+        const a=document.createElement('a');a.download='suvenir-Vasile-Dor-de-Bucovina.png';a.href=out.toDataURL('image/png');a.click();};img.src=selfieData;
+    }
+    document.querySelector('#openInvite').addEventListener('click',()=>{cameraStep.hidden=false;revealStep.hidden=true;dialog.showModal()});
+    startButton.addEventListener('click',startCamera);takeButton.addEventListener('click',takePhoto);
+    document.querySelector('#skipPhoto').addEventListener('click',reveal);document.querySelector('#downloadSouvenir').addEventListener('click',downloadSouvenir);
+    document.querySelector('#closeInvite').addEventListener('click',()=>{stopCamera();dialog.close()});
     dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
   </script>
 </body>
